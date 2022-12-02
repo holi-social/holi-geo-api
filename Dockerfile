@@ -11,6 +11,6 @@ COPY deno.json .
 COPY ./app ./app
 
 RUN deno cache --lock=lock.json app/deps.ts
-RUN deno cache app/main.ts
+RUN deno cache --lock=lock.json app/main.ts
 
 CMD ["deno", "run", "--allow-net", "--allow-env", "--lock=lock.json", "--cached-only", "app/main.ts"]
