@@ -192,10 +192,9 @@ if "you know what you're doing".
 
 ### Configuration
 
-| Environment Variable     | Default Value | Description                                |
-| ------------------------ | ------------- | ------------------------------------------ |
-| PORT                     | 8003          | the port to listen on                      |
-| CACHE_ENABLED            | true          | wether or not to enable caching            |
-| CACHE_TTL_MS_PLACES      | 24 hours      | time-to-live in ms for places caching      |
-| PLACES_API_KEY           | undefined     | Google Maps Places API key                 |
-
+| Environment Variable | Default Value | Description                           |
+| -------------------- | ------------- | ------------------------------------- |
+| PORT                 | 8003          | the port to listen on                 |
+| CACHE_ENABLED        | true          | wether or not to enable caching       |
+| CACHE_TTL_MS_PLACES  | 24 hours      | time-to-live in ms for places caching |
+| PLACES_API_KEY       | undefined     | Google Maps Places API key            |

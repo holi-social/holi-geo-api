@@ -1,6 +1,4 @@
-import {
-  PlacesParameters,
-} from "./types.ts";
+import { PlacesParameters } from "./types.ts";
 import { fetchPlaces } from "./places.ts";
 import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 
