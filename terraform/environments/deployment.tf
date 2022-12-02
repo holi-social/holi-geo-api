@@ -49,16 +49,8 @@ resource "google_cloud_run_service" "geo_api" {
         }
         env {
           name  = "PLACES_API_KEY"
-          value = google_apikeys_key.deployment.key_string
+          value = local.places_api_key
         }
-        # env {
-        #   name  = "ENVIRONMENT_ID"
-        #   value = local.environment_name
-        # }
-        # env {
-        #   name  = "SENTRY_DSN"
-        #   value = "https://0e0fac0c76884e0a95432d780c4560fc@o949544.ingest.sentry.io/6741291"
-        # }
 
         resources {
           limits = {
