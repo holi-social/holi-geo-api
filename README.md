@@ -146,7 +146,7 @@ In addition we deploy another key intended for local development (via
 
 This key is shared amongst all environments. You can receive the key in the
 `holi-infra` project value via
-`terraform refresh; terraform output --raw places-api-key-dev`.
+`terraform refresh; terraform output --raw google-places-api-key-dev`.
 
 ## Local execution
 
