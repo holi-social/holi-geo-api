@@ -27,7 +27,7 @@ The backend for everything geo-related.
 
 ### Setup
 
-Install [`deno`](https://github.com/denoland/deno_install) in version 1.25.1
+Install [`deno`](https://github.com/denoland/deno_install) in version 1.28.3.
 
 as well as [`Velociraptor`](https://velociraptor.run/docs/installation/).
 
