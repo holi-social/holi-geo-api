@@ -1,4 +1,3 @@
-import setupLogging from "./logging.ts";
 import {
   afterEach,
   assertEquals,
@@ -44,8 +43,6 @@ const queryPlaces = async (
 ): Promise<Place[]> => {
   return (await processGqlRequest(graphQLServer, query))?.places as Place[];
 };
-
-setupLogging("test");
 
 describe("places", () => {
   let fetchStub: Stub;
