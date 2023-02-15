@@ -1,23 +1,17 @@
 import { PlacesParameters } from "./types.ts";
-import { fetchPlaces } from "./places.ts";
+import { fetchPlaces } from "./geoapify.ts";
 import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 import { logger } from "./logging.ts";
 
 const typeDefs = `
-    type PlaceSubstringMatch {
-        length: Int!
-        offset: Int!
-    }
-
     type Place {
-        description: String!
-        mainText: String!
-        mainTextMatchedSubstrings: [PlaceSubstringMatch]!
-        secondaryText: String!
+        id: String!
+        name: String!
+        city: String
     }
 
     type Query {
-        places(input: String!): [Place]!
+        places(text: String!, limit: Int, language: String): [Place]!
     }
 `;
 
@@ -27,7 +21,7 @@ const createResolvers = (config: ServerConfig) => ({
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesParameters,
-    ) => fetchPlaces(parameters, config.placesApiKey || ""),
+    ) => fetchPlaces(parameters, config.geoapifyApiKey || ""),
   },
 });
 
@@ -39,7 +33,7 @@ export interface ServerConfig {
   port?: number; // default: 8003
   cacheEnabled?: boolean; // default: true
   cacheTtlMsPlaces?: number; // default: 24 hours
-  placesApiKey?: string; // must be given in order for places calls to work
+  geoapifyApiKey?: string;
 }
 
 export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
