@@ -14,7 +14,9 @@ const serverConfigFromEnv = () => {
   return {
     port: asNumber(Deno.env.get("PORT")),
     cacheEnabled: asBoolean(Deno.env.get("CACHE_ENABLED")),
-    cacheTtlMsPlaces: asNumber(Deno.env.get("CACHE_TTL_MS_PLACES")),
+    cacheTtlMsPlacesAutocomplete: asNumber(
+      Deno.env.get("DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE"),
+    ),
     geoapifyApiKey: Deno.env.get("GEOAPIFY_API_KEY"),
   };
 };

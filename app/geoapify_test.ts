@@ -26,9 +26,9 @@ const placeFragment = `
   city
 `;
 
-const placesQuery = (text: string) => `
+const placesAutocompleteQuery = (text: string) => `
 {
-  places(text: "${text}") {
+  placesAutocomplete(text: "${text}") {
     ${placeFragment}
   }
 }
@@ -38,7 +38,8 @@ const queryPlaces = async (
   graphQLServer: GraphQLServer,
   query: string,
 ): Promise<Place[]> => {
-  return (await processGqlRequest(graphQLServer, query))?.places as Place[];
+  return (await processGqlRequest(graphQLServer, query))
+    ?.placesAutocomplete as Place[];
 };
 
 describe("places", () => {
@@ -67,7 +68,10 @@ describe("places", () => {
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
     const graphQLServer = createGraphQLServer({});
-    const places = await queryPlaces(graphQLServer, placesQuery("Munich"));
+    const places = await queryPlaces(
+      graphQLServer,
+      placesAutocompleteQuery("Munich"),
+    );
     assertEquals(places, expectedGqlResponse);
   });
 });

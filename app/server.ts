@@ -11,13 +11,13 @@ const typeDefs = `
     }
 
     type Query {
-        places(text: String!, limit: Int, language: String): [Place]!
+        placesAutocomplete(text: String!, limit: Int, language: String): [Place]!
     }
 `;
 
 const createResolvers = (config: ServerConfig) => ({
   Query: {
-    places: (
+    placesAutocomplete: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesParameters,
@@ -27,12 +27,12 @@ const createResolvers = (config: ServerConfig) => ({
 
 export const DEFAULT_PORT = 8003;
 export const DEFAULT_CACHE_ENABLED = true;
-export const DEFAULT_CACHE_TTL_MS_PLACES = 60_000 * 60 * 24;
+export const DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE = 60_000 * 60 * 24;
 
 export interface ServerConfig {
   port?: number; // default: 8003
   cacheEnabled?: boolean; // default: true
-  cacheTtlMsPlaces?: number; // default: 24 hours
+  cacheTtlMsPlacesAutocomplete?: number; // default: 24 hours
   geoapifyApiKey?: string;
 }
 
@@ -42,7 +42,8 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
       useResponseCache({
         session: () => null, // global cache, shared by all users
         ttlPerSchemaCoordinate: {
-          "Query.places": DEFAULT_CACHE_TTL_MS_PLACES,
+          "Query.placesAutocomplete":
+            DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
         },
       }),
     ]
