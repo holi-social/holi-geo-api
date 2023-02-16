@@ -11,7 +11,6 @@ resource "random_id" "main" {
 resource "google_project_service" "service" {
   for_each = toset([
     "endpoints.googleapis.com",
-    "places-backend.googleapis.com",
     "run.googleapis.com",
     "servicecontrol.googleapis.com",
     "servicemanagement.googleapis.com",
