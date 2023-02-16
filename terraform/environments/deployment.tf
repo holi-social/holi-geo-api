@@ -49,10 +49,6 @@ resource "google_cloud_run_service" "geo_api" {
           value = local.environment
         }
         env {
-          name  = "PLACES_API_KEY"
-          value = local.places_api_key
-        }
-        env {
           name = "GEOAPIFY_API_KEY"
           value_from {
             secret_key_ref {
