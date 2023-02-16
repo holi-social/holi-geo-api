@@ -11,7 +11,6 @@ resource "random_id" "main" {
 resource "google_project_service" "service" {
   for_each = toset([
     "endpoints.googleapis.com",
-    "places-backend.googleapis.com",
     "run.googleapis.com",
     "servicecontrol.googleapis.com",
     "servicemanagement.googleapis.com",
@@ -49,8 +48,13 @@ resource "google_cloud_run_service" "geo_api" {
           value = local.environment
         }
         env {
-          name  = "PLACES_API_KEY"
-          value = local.places_api_key
+          name = "GEOAPIFY_API_KEY"
+          value_from {
+            secret_key_ref {
+              key  = "latest"
+              name = "GEOAPIFY_API_KEY"
+            }
+          }
         }
 
         resources {

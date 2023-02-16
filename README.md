@@ -13,7 +13,7 @@ The backend for everything geo-related.
     - [Testing](#testing)
     - [Tasks](#tasks)
     - [VS Code extension](#vs-code-extension)
-  - [Places API](#places-api)
+  - [Geoapify API](#geoapify-api)
   - [Local execution](#local-execution)
   - [Continuous Integration and Deployment](#continuous-integration-and-deployment)
     - [Skipping parts of CI](#skipping-parts-of-ci)
@@ -128,25 +128,26 @@ JetBrains also offers a
 [plugin](https://plugins.jetbrains.com/plugin/14382-deno) for WebStorm and other
 JetBrains IDEs.
 
-## Places API
+## Geoapify API
 
-The server uses Google Places API to create autocomplete predictions for city
-names. In order to be able to use the Places API, requests are equipped with an
-API key that is used by the Places API to match the project and for billing
-purposes. Within the deployment, three keys are in usage (managed by terraform):
+The server uses Geoapify Geocoding API to create autocomplete predictions for
+country, region, or city names. In order to be able to use the Geoapify
+Geocoding API, requests are equipped with an API key that is used by the
+Geoapify API to match the project and for billing purposes. Within the
+deployment, three keys are in usage (managed by terraform):
 
-1. `places-api-key-staging`
-2. `places-api-key-production`
-3. `places-api-key-review` (shared amongst all review environments)
+1. `geoapify-api-key-staging`
+2. `geoapify-api-key-production`
+3. `geoapify-api-key-review` (shared amongst all review environments)
 
 In addition we deploy another key intended for local development (via
 `holi-infra`):
 
-4. `places-api-key-dev`
+4. `geoapify-api-key-dev`
 
 This key is shared amongst all environments. You can receive the key in the
 `holi-infra` project value via
-`terraform refresh; terraform output --raw google-places-api-key-dev`.
+`terraform refresh; terraform output --raw geoapify-api-key-dev`.
 
 ## Local execution
 
@@ -192,9 +193,9 @@ if "you know what you're doing".
 
 ### Configuration
 
-| Environment Variable | Default Value | Description                           |
-| -------------------- | ------------- | ------------------------------------- |
-| PORT                 | 8003          | the port to listen on                 |
-| CACHE_ENABLED        | true          | wether or not to enable caching       |
-| CACHE_TTL_MS_PLACES  | 24 hours      | time-to-live in ms for places caching |
-| PLACES_API_KEY       | undefined     | Google Maps Places API key            |
+| Environment Variable      | Default Value | Description                                 |
+| ------------------------- | ------------- | ------------------------------------------- |
+| PORT                      | 8003          | the port to listen on                       |
+| CACHE_ENABLED             | true          | wether or not to enable caching             |
+| CACHE_TTL_MS_AUTOCOMPLETE | 24 hours      | time-to-live in ms for autocomplete caching |
+| GEOAPIFY_API_KEY          | undefined     | Geoapify API key                            |
