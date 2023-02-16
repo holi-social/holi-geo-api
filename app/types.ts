@@ -4,10 +4,10 @@ export interface Place {
   city?: string; //This is a temporary field which will be used by the frontend when filtering for spaces
 }
 
-type Language = "en" | "de";
+export const DEFAULT_LANGUAGE = "en";
+export const SUPPORTED_LANGUAGES = ["en", "de"];
 
-export interface PlacesParameters {
+export interface PlacesAutocompleteParameters {
   text: string;
-  language?: Language;
   limit?: number;
 }

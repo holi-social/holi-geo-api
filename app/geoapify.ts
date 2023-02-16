@@ -1,4 +1,4 @@
-import { Place, PlacesParameters } from "./types.ts";
+import { Place, PlacesAutocompleteParameters } from "./types.ts";
 import { logger } from "./logging.ts";
 import {
   GeoapifyAutocompleteResult,
@@ -9,7 +9,8 @@ const GEOAPIFY_AUTOCOMPLETE_URL =
   "https://api.geoapify.com/v1/geocode/autocomplete";
 
 const buildPlacesAutocompleteUrl = (
-  { text, language = "en", limit = GeoapifyFilters.LIMIT }: PlacesParameters,
+  { text, limit = GeoapifyFilters.LIMIT }: PlacesAutocompleteParameters,
+  language: string,
   geoapifyApiKey: string,
 ): URL => {
   const url = new URL(
@@ -34,10 +35,11 @@ export const transformAutocompleteResults = (
 };
 
 export const fetchPlaces = (
-  params: PlacesParameters,
+  params: PlacesAutocompleteParameters,
+  language: string,
   geoapifyApiKey: string,
 ): Promise<Place[]> => {
-  const url = buildPlacesAutocompleteUrl(params, geoapifyApiKey);
+  const url = buildPlacesAutocompleteUrl(params, language, geoapifyApiKey);
   const start = Date.now();
   logger.info(`fetching places for search input ${params.text}`);
   return fetch(url)

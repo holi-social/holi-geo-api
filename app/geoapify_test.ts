@@ -13,7 +13,7 @@ import {
   geoapifyAutocompleteResponse,
 } from "./geoapify_test_data.ts";
 
-import { Place } from "./types.ts";
+import { DEFAULT_LANGUAGE, Place } from "./types.ts";
 import { createGraphQLServer, GraphQLServer } from "./server.ts";
 
 const emptyResponse = {
@@ -56,6 +56,7 @@ describe("places", () => {
 
     await fetchPlaces(
       { text: "Munich" },
+      DEFAULT_LANGUAGE,
       placesApiKey,
     );
 

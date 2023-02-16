@@ -1,4 +1,8 @@
-import { PlacesParameters } from "./types.ts";
+import {
+  DEFAULT_LANGUAGE,
+  PlacesAutocompleteParameters,
+  SUPPORTED_LANGUAGES,
+} from "./types.ts";
 import { fetchPlaces } from "./geoapify.ts";
 import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 import { logger } from "./logging.ts";
@@ -11,7 +15,7 @@ const typeDefs = `
     }
 
     type Query {
-        placesAutocomplete(text: String!, limit: Int, language: String): [Place]!
+        placesAutocomplete(text: String!, limit: Int): [Place]!
     }
 `;
 
@@ -20,8 +24,20 @@ const createResolvers = (config: ServerConfig) => ({
     placesAutocomplete: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
-      parameters: PlacesParameters,
-    ) => fetchPlaces(parameters, config.geoapifyApiKey || ""),
+      parameters: PlacesAutocompleteParameters,
+      context: GraphQLContext,
+    ) => {
+      const language =
+        context.language && SUPPORTED_LANGUAGES.includes(context.language)
+          ? context.language
+          : DEFAULT_LANGUAGE;
+
+      return fetchPlaces(
+        parameters,
+        language,
+        config.geoapifyApiKey || "",
+      );
+    },
   },
 });
 
@@ -35,6 +51,17 @@ export interface ServerConfig {
   cacheTtlMsPlacesAutocomplete?: number; // default: 24 hours
   geoapifyApiKey?: string;
 }
+
+export type GraphQLContext = {
+  params?: {
+    extensions?: {
+      headers?: {
+        [key: string]: string;
+      };
+    };
+  };
+  language?: string;
+};
 
 export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
   const plugins = config.cacheEnabled || DEFAULT_CACHE_ENABLED
@@ -53,6 +80,15 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
     schema: createSchema({ resolvers, typeDefs }),
     graphiql: true,
     plugins,
+    context: (context: GraphQLContext) => {
+      const language = (context.params?.extensions?.headers || {})[
+        "accept-language"
+      ];
+      return {
+        ...context,
+        language,
+      };
+    },
   });
 };
 
