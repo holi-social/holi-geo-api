@@ -8,10 +8,16 @@ import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 import { logger } from "./logging.ts";
 
 const typeDefs = `
+    type Coordinates {
+      latitude: Float!
+      longitude: Float!
+    }
+
     type Place {
         id: String!
         name: String!
         city: String
+        coordinates: Coordinates!
     }
 
     type Query {
