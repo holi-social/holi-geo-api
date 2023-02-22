@@ -24,6 +24,10 @@ const placeFragment = `
   id
   name
   city
+  coordinates {
+    latitude
+    longitude
+  }
 `;
 
 const placesAutocompleteQuery = (text: string) => `

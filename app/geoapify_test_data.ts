@@ -94,10 +94,18 @@ export const expectedGqlResponse = [
     id: "51ac66e77e9826274059f9426dc08c114840f00101f901dcf3000000000000c00208",
     name: "Munich, Bavaria, Germany",
     city: "Munich",
+    coordinates: {
+      latitude: 48.1371079,
+      longitude: 11.5753822,
+    },
   },
   {
     id: "51b1a888d349b558c059b0aa5e7ea7554840f00101f90194c5020000000000c00208",
     name: "Munich, ND, United States of America",
     city: "Munich",
+    coordinates: {
+      latitude: 48.669174,
+      longitude: -98.832631,
+    },
   },
 ];

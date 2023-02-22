@@ -31,6 +31,10 @@ export const transformAutocompleteResults = (
     id: place.place_id,
     name: place.formatted,
     city: place.city,
+    coordinates: {
+      latitude: place.lat,
+      longitude: place.lon,
+    },
   }));
 };
 
