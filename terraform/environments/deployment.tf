@@ -52,7 +52,7 @@ resource "google_cloud_run_service" "geo_api" {
           value_from {
             secret_key_ref {
               key  = "latest"
-              name = "GEOAPIFY_API_KEY"
+              name = local.environment_name == "production" ? "GEOAPIFY_API_KEY_PRODUCTION" : "GEOAPIFY_API_KEY_DEVELOPMENT"
             }
           }
         }

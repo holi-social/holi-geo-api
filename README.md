@@ -133,9 +133,11 @@ JetBrains IDEs.
 The server uses Geoapify Geocoding API to create autocomplete predictions for
 country, region, or city names. In order to be able to use the Geoapify
 Geocoding API, requests are equipped with an API key that is used by the
-Geoapify API to match the project and for billing purposes.
+Geoapify API to match the project and for billing purposes. Within the
+deployment, two keys are in usage (managed by terraform):
 
-This key is shared amongst all environments. You can find the key in passbolt.
+1. `geoapify-api-key-development`
+2. `geoapify-api-key-production`
 
 ## Local execution
 
