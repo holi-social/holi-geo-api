@@ -1,15 +1,19 @@
-export interface PlaceSubstringMatch {
-  length: number;
-  offset: number;
-}
+export type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
 
 export interface Place {
-  description: string;
-  mainText: string;
-  mainTextMatchedSubstrings: PlaceSubstringMatch[];
-  secondaryText: string;
+  id: string;
+  name: string;
+  city?: string; //This is a temporary field which will be used by the frontend when filtering for spaces
+  coordinates: Coordinates;
 }
 
-export interface PlacesParameters {
-  input: string;
+export const DEFAULT_LANGUAGE = "en";
+export const SUPPORTED_LANGUAGES = ["en", "de"];
+
+export interface PlacesAutocompleteParameters {
+  text: string;
+  limit?: number;
 }

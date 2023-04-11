@@ -7,12 +7,13 @@ import {
   Stub,
 } from "./dev_deps.ts";
 import { processGqlRequest, stubFetch } from "./common_test.ts";
-import { fetchPlaces } from "./places.ts";
+import { fetchPlaces } from "./geoapify.ts";
 import {
-  expectedGqlResponseHam,
-  placesResponseHam,
-} from "./places_test_data.ts";
-import { Place } from "./types.ts";
+  expectedGqlResponse,
+  geoapifyAutocompleteResponse,
+} from "./geoapify_test_data.ts";
+
+import { DEFAULT_LANGUAGE, Place } from "./types.ts";
 import { createGraphQLServer, GraphQLServer } from "./server.ts";
 
 const emptyResponse = {
@@ -20,18 +21,18 @@ const emptyResponse = {
 };
 
 const placeFragment = `
-  description
-  mainText
-  secondaryText
-  mainTextMatchedSubstrings {
-    length
-    offset
+  id
+  name
+  city
+  coordinates {
+    latitude
+    longitude
   }
 `;
 
-const placesQuery = (input: string) => `
+const placesAutocompleteQuery = (text: string) => `
 {
-  places(input: "${input}") {
+  placesAutocomplete(text: "${text}") {
     ${placeFragment}
   }
 }
@@ -41,7 +42,8 @@ const queryPlaces = async (
   graphQLServer: GraphQLServer,
   query: string,
 ): Promise<Place[]> => {
-  return (await processGqlRequest(graphQLServer, query))?.places as Place[];
+  return (await processGqlRequest(graphQLServer, query))
+    ?.placesAutocomplete as Place[];
 };
 
 describe("places", () => {
@@ -55,18 +57,26 @@ describe("places", () => {
     fetchStub = stubFetch(emptyResponse);
 
     const placesApiKey = "random_string";
-    await fetchPlaces({ input: "Ham" }, placesApiKey);
+
+    await fetchPlaces(
+      { text: "Munich" },
+      DEFAULT_LANGUAGE,
+      placesApiKey,
+    );
 
     const expectedUrl = new URL(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Ham&types=%28cities%29&key=${placesApiKey}`,
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=Munich&limit=3&format=json&lang=en&apiKey=${placesApiKey}`,
     );
     assertSpyCall(fetchStub, 0, { args: [expectedUrl] });
   });
 
   it("correctly parses result and returns", async () => {
-    fetchStub = stubFetch(placesResponseHam);
+    fetchStub = stubFetch(geoapifyAutocompleteResponse);
     const graphQLServer = createGraphQLServer({});
-    const places = await queryPlaces(graphQLServer, placesQuery("Ham"));
-    assertEquals(places, expectedGqlResponseHam);
+    const places = await queryPlaces(
+      graphQLServer,
+      placesAutocompleteQuery("Munich"),
+    );
+    assertEquals(places, expectedGqlResponse);
   });
 });

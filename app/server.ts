@@ -1,46 +1,73 @@
-import { PlacesParameters } from "./types.ts";
-import { fetchPlaces } from "./places.ts";
+import {
+  DEFAULT_LANGUAGE,
+  PlacesAutocompleteParameters,
+  SUPPORTED_LANGUAGES,
+} from "./types.ts";
+import { fetchPlaces } from "./geoapify.ts";
 import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 import { logger } from "./logging.ts";
 
 const typeDefs = `
-    type PlaceSubstringMatch {
-        length: Int!
-        offset: Int!
+    type Coordinates {
+      latitude: Float!
+      longitude: Float!
     }
 
     type Place {
-        description: String!
-        mainText: String!
-        mainTextMatchedSubstrings: [PlaceSubstringMatch]!
-        secondaryText: String!
+        id: String!
+        name: String!
+        city: String
+        coordinates: Coordinates!
     }
 
     type Query {
-        places(input: String!): [Place]!
+        placesAutocomplete(text: String!, limit: Int): [Place]!
     }
 `;
 
 const createResolvers = (config: ServerConfig) => ({
   Query: {
-    places: (
+    placesAutocomplete: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
-      parameters: PlacesParameters,
-    ) => fetchPlaces(parameters, config.placesApiKey || ""),
+      parameters: PlacesAutocompleteParameters,
+      context: GraphQLContext,
+    ) => {
+      const language =
+        context.language && SUPPORTED_LANGUAGES.includes(context.language)
+          ? context.language
+          : DEFAULT_LANGUAGE;
+
+      return fetchPlaces(
+        parameters,
+        language,
+        config.geoapifyApiKey || "",
+      );
+    },
   },
 });
 
 export const DEFAULT_PORT = 8003;
 export const DEFAULT_CACHE_ENABLED = true;
-export const DEFAULT_CACHE_TTL_MS_PLACES = 60_000 * 60 * 24;
+export const DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE = 60_000 * 60 * 24;
 
 export interface ServerConfig {
   port?: number; // default: 8003
   cacheEnabled?: boolean; // default: true
-  cacheTtlMsPlaces?: number; // default: 24 hours
-  placesApiKey?: string; // must be given in order for places calls to work
+  cacheTtlMsPlacesAutocomplete?: number; // default: 24 hours
+  geoapifyApiKey?: string;
 }
+
+export type GraphQLContext = {
+  params?: {
+    extensions?: {
+      headers?: {
+        [key: string]: string;
+      };
+    };
+  };
+  language?: string;
+};
 
 export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
   const plugins = config.cacheEnabled || DEFAULT_CACHE_ENABLED
@@ -48,7 +75,8 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
       useResponseCache({
         session: () => null, // global cache, shared by all users
         ttlPerSchemaCoordinate: {
-          "Query.places": DEFAULT_CACHE_TTL_MS_PLACES,
+          "Query.placesAutocomplete":
+            DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
         },
       }),
     ]
@@ -58,6 +86,15 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
     schema: createSchema({ resolvers, typeDefs }),
     graphiql: true,
     plugins,
+    context: (context: GraphQLContext) => {
+      const language = (context.params?.extensions?.headers || {})[
+        "accept-language"
+      ];
+      return {
+        ...context,
+        language,
+      };
+    },
   });
 };
 

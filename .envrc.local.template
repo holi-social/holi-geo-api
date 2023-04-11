@@ -1,2 +1,2 @@
-export PLACES_API_KEY=""
+export GEOAPIFY_API_KEY=""
 
