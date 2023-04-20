@@ -16,4 +16,5 @@ export const SUPPORTED_LANGUAGES = ["en", "de"];
 export interface PlacesAutocompleteParameters {
   text: string;
   limit?: number;
+  level?: string;
 }
