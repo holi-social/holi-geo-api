@@ -21,7 +21,7 @@ const typeDefs = `
     }
 
     type Query {
-        placesAutocomplete(text: String!, limit: Int): [Place]!
+        placesAutocomplete(text: String!, limit: Int, level: String): [Place]!
     }
 `;
 

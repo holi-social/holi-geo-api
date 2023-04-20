@@ -9,7 +9,7 @@ const GEOAPIFY_AUTOCOMPLETE_URL =
   "https://api.geoapify.com/v1/geocode/autocomplete";
 
 const buildPlacesAutocompleteUrl = (
-  { text, limit = GeoapifyFilters.LIMIT }: PlacesAutocompleteParameters,
+  { text, level, limit = GeoapifyFilters.LIMIT }: PlacesAutocompleteParameters,
   language: string,
   geoapifyApiKey: string,
 ): URL => {
@@ -21,6 +21,11 @@ const buildPlacesAutocompleteUrl = (
   url.searchParams.append("format", GeoapifyFilters.FORMAT);
   url.searchParams.append("lang", language);
   url.searchParams.append("apiKey", geoapifyApiKey);
+
+  if (level) {
+    url.searchParams.append("type", level);
+  }
+
   return url;
 };
 
