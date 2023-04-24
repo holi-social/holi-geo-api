@@ -1,9 +1,10 @@
 import {
   DEFAULT_LANGUAGE,
   PlacesAutocompleteParameters,
+  PlacesDetailsParameters,
   SUPPORTED_LANGUAGES,
 } from "./types.ts";
-import { fetchPlaces } from "./geoapify.ts";
+import { fetchPlaceDetails, fetchPlaces } from "./geoapify.ts";
 import { createSchema, createYoga, serve, useResponseCache } from "./deps.ts";
 import { logger } from "./logging.ts";
 
@@ -12,7 +13,11 @@ const typeDefs = `
       latitude: Float!
       longitude: Float!
     }
-
+    
+    type Boundaries {
+      coordinates: [[[[Float!]]]]!
+    }
+    
     type Place {
         id: String!
         name: String!
@@ -20,8 +25,14 @@ const typeDefs = `
         coordinates: Coordinates!
     }
 
+    type PlaceDetails {
+      id: ID!
+      boundaries: Boundaries!
+    }
+    
     type Query {
         placesAutocomplete(text: String!, limit: Int, level: String): [Place]!
+        placeDetails(id: String!): PlaceDetails!
     }
 `;
 
@@ -43,6 +54,13 @@ const createResolvers = (config: ServerConfig) => ({
         language,
         config.geoapifyApiKey || "",
       );
+    },
+    placeDetails: (
+      // deno-lint-ignore no-explicit-any
+      _parent: any,
+      parameters: PlacesDetailsParameters,
+    ) => {
+      return fetchPlaceDetails(parameters, config.geoapifyApiKey || "");
     },
   },
 });
@@ -77,6 +95,7 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
         ttlPerSchemaCoordinate: {
           "Query.placesAutocomplete":
             DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
+          "Query.placeDetails": DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
         },
       }),
     ]
