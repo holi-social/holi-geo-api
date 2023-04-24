@@ -9,11 +9,13 @@ import {
 import { processGqlRequest, stubFetch } from "./common_test.ts";
 import { fetchPlaces } from "./geoapify.ts";
 import {
-  expectedGqlResponse,
+  expectedPlaceDetailsGqlResponse,
+  expectedPlacesAutocompleteGqlResponse,
   geoapifyAutocompleteResponse,
+  geoapifyPlaceDetailsResponse,
 } from "./geoapify_test_data.ts";
 
-import { DEFAULT_LANGUAGE, Place } from "./types.ts";
+import { DEFAULT_LANGUAGE, Place, PlaceDetails } from "./types.ts";
 import { createGraphQLServer, GraphQLServer } from "./server.ts";
 
 const emptyResponse = {
@@ -30,10 +32,25 @@ const placeFragment = `
   }
 `;
 
+const placeDetailsFragment = `
+  id
+  boundaries {
+    coordinates
+  }
+`;
+
 const placesAutocompleteQuery = (text: string) => `
 {
   placesAutocomplete(text: "${text}") {
     ${placeFragment}
+  }
+}
+`;
+
+const placeDetailsQuery = (id: string) => `
+{
+  placeDetails(id: "${id}") {
+    ${placeDetailsFragment}
   }
 }
 `;
@@ -44,6 +61,14 @@ const queryPlaces = async (
 ): Promise<Place[]> => {
   return (await processGqlRequest(graphQLServer, query))
     ?.placesAutocomplete as Place[];
+};
+
+const queryPlaceDetails = async (
+  graphQLServer: GraphQLServer,
+  query: string,
+): Promise<PlaceDetails> => {
+  return (await processGqlRequest(graphQLServer, query))
+    ?.placeDetails as PlaceDetails;
 };
 
 describe("places", () => {
@@ -72,11 +97,32 @@ describe("places", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
+    console.log(fetchStub);
     const graphQLServer = createGraphQLServer({});
     const places = await queryPlaces(
       graphQLServer,
       placesAutocompleteQuery("Munich"),
     );
-    assertEquals(places, expectedGqlResponse);
+    assertEquals(places, expectedPlacesAutocompleteGqlResponse);
+  });
+});
+
+describe("placeDetails", () => {
+  let fetchStub: Stub;
+
+  afterEach(() => {
+    fetchStub?.restore();
+  });
+
+  it("correctly parses result and returns", async () => {
+    fetchStub = stubFetch(geoapifyPlaceDetailsResponse);
+    const graphQLServer = createGraphQLServer({});
+    const placeDetails = await queryPlaceDetails(
+      graphQLServer,
+      placeDetailsQuery(
+        "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
+      ),
+    );
+    assertEquals(placeDetails, expectedPlaceDetailsGqlResponse);
   });
 });
