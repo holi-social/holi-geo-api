@@ -1,4 +1,5 @@
 import {
+  Boundaries,
   Place,
   PlaceDetails,
   PlacesAutocompleteParameters,
@@ -9,6 +10,7 @@ import {
   GeoapifyAutocompleteResult,
   GeoapifyFilters,
   GeoapifyPlaceDetailsResult,
+  GeoapifyPlaceGeometry,
 } from "./geoapify_api_types.ts";
 
 const GEOAPIFY_BASE_URL = "https://api.geoapify.com";
@@ -61,13 +63,26 @@ const buildPlaceDetailsUrl = (
   return url;
 };
 
-export const transformPlaceDetailsResults = (
+const transformPlaceBoundaries = (
+  geometry: GeoapifyPlaceGeometry,
+): Boundaries => {
+  switch (geometry.type) {
+    case "Polygon":
+      return { coordinates: [geometry.coordinates] };
+    case "MultiPolygon":
+      // falls through
+    default:
+      return { coordinates: geometry.coordinates };
+  }
+};
+
+const transformPlaceDetailsResults = (
   { features = [] }: GeoapifyPlaceDetailsResult,
 ): PlaceDetails => {
   const feature = features[0];
   return {
     id: feature.properties.place_id,
-    boundaries: feature.geometry,
+    boundaries: transformPlaceBoundaries(feature.geometry),
   };
 };
 
