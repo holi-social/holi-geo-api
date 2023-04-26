@@ -36,6 +36,13 @@ const typeDefs = `
     }
 `;
 
+const getLanguage = (languages = "") =>
+  languages
+    .split(",")
+    .map((language) => language.split("-")[0])
+    .find((language) => SUPPORTED_LANGUAGES.includes(language)) ||
+  DEFAULT_LANGUAGE;
+
 const createResolvers = (config: ServerConfig) => ({
   Query: {
     placesAutocomplete: (
@@ -43,18 +50,12 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesAutocompleteParameters,
       context: GraphQLContext,
-    ) => {
-      const language =
-        context.language && SUPPORTED_LANGUAGES.includes(context.language)
-          ? context.language
-          : DEFAULT_LANGUAGE;
-
-      return fetchPlaces(
+    ) =>
+      fetchPlaces(
         parameters,
-        language,
+        getLanguage(context.language),
         config.geoapifyApiKey || "",
-      );
-    },
+      ),
     placeDetails: (
       // deno-lint-ignore no-explicit-any
       _parent: any,

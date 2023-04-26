@@ -99,7 +99,6 @@ describe("places", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
-    console.log(fetchStub);
     const graphQLServer = createGraphQLServer({});
     const places = await queryPlaces(
       graphQLServer,
