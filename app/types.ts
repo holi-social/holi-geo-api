@@ -1,3 +1,6 @@
+export type Boundaries = {
+  coordinates: number[][][][];
+};
 export type Coordinates = {
   latitude: number;
   longitude: number;
@@ -10,6 +13,11 @@ export interface Place {
   coordinates: Coordinates;
 }
 
+export interface PlaceDetails {
+  id: string;
+  boundaries: Boundaries;
+}
+
 export const DEFAULT_LANGUAGE = "en";
 export const SUPPORTED_LANGUAGES = ["en", "de"];
 
@@ -17,4 +25,8 @@ export interface PlacesAutocompleteParameters {
   text: string;
   limit?: number;
   level?: string;
+}
+
+export interface PlacesDetailsParameters {
+  id: string;
 }
