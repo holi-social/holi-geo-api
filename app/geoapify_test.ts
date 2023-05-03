@@ -36,9 +36,8 @@ const placeFragment = `
 
 const placeDetailsFragment = `
   id
-  boundaries {
-    coordinates
-  }
+  name
+  geometry
 `;
 
 const placesAutocompleteQuery = (text: string) => `

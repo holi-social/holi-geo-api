@@ -2451,28 +2451,24 @@ export const geoapifyPlaceDetailsResponse = {
 export const expectedPlaceDetailsGqlResponse = {
   id:
     "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
-  boundaries: {
-    coordinates: placeDetailCoordinates,
+  name: "München, Munich, Bavaria, Germany",
+  geometry: placeFeature,
+};
+
+const placeFeatureSinglePolygon = {
+  ...placeFeature,
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": placeDetailCoordinates[0],
   },
 };
 
 export const geoapifyPlaceDetailsResponseSinglePolygon = {
   "type": "FeatureCollection",
-  "features": [
-    {
-      ...placeFeature,
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": placeDetailCoordinates[0],
-      },
-    },
-  ],
+  "features": [placeFeatureSinglePolygon],
 };
 
 export const expectedPlaceDetailsGqlResponseSinglePolygon = {
-  id:
-    "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
-  boundaries: {
-    coordinates: [placeDetailCoordinates[0]],
-  },
+  ...expectedPlaceDetailsGqlResponse,
+  geometry: placeFeatureSinglePolygon,
 };

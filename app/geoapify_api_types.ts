@@ -6,25 +6,14 @@ export type GeoapifyPlace = {
   lat: number;
 };
 
-type GeoapifyPlaceGeometryPolygon = {
-  type: "Polygon";
-  coordinates: number[][][];
-};
-
-type GeoapifyPlaceGeometryMultiPolygon = {
-  type: "MultiPolygon";
-  coordinates: number[][][][];
-};
-
-export type GeoapifyPlaceGeometry =
-  | GeoapifyPlaceGeometryPolygon
-  | GeoapifyPlaceGeometryMultiPolygon;
+export type GeoapifyGeometry = Record<string, unknown>;
 
 export type GeoapifyPlaceDetails = {
   properties: {
     place_id: string;
+    formatted: string;
   };
-  geometry: GeoapifyPlaceGeometry;
+  geometry: GeoapifyGeometry;
 };
 
 export type GeoapifyAutocompleteResult = {

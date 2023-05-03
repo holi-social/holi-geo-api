@@ -1,6 +1,5 @@
-export type Boundaries = {
-  coordinates: number[][][][];
-};
+import { GeoapifyGeometry } from "./geoapify_api_types.ts";
+
 export type Coordinates = {
   latitude: number;
   longitude: number;
@@ -15,7 +14,8 @@ export interface Place {
 
 export interface PlaceDetails {
   id: string;
-  boundaries: Boundaries;
+  name: string;
+  geometry: GeoapifyGeometry;
 }
 
 export const DEFAULT_LANGUAGE = "en";

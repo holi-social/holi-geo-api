@@ -14,9 +14,7 @@ const typeDefs = `
       longitude: Float!
     }
     
-    type Boundaries {
-      coordinates: [[[[Float!]]]]!
-    }
+    scalar Geometry
     
     type Place {
         id: String!
@@ -27,7 +25,8 @@ const typeDefs = `
 
     type PlaceDetails {
       id: ID!
-      boundaries: Boundaries!
+      name: String!
+      geometry: Geometry!
     }
     
     type Query {
@@ -60,8 +59,13 @@ const createResolvers = (config: ServerConfig) => ({
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesDetailsParameters,
+      context: GraphQLContext,
     ) => {
-      return fetchPlaceDetails(parameters, config.geoapifyApiKey || "");
+      return fetchPlaceDetails(
+        parameters,
+        getLanguage(context.language),
+        config.geoapifyApiKey || "",
+      );
     },
   },
 });

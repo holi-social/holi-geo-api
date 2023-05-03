@@ -1,5 +1,4 @@
 import {
-  Boundaries,
   Place,
   PlaceDetails,
   PlacesAutocompleteParameters,
@@ -10,7 +9,6 @@ import {
   GeoapifyAutocompleteResult,
   GeoapifyFilters,
   GeoapifyPlaceDetailsResult,
-  GeoapifyPlaceGeometry,
 } from "./geoapify_api_types.ts";
 
 const GEOAPIFY_BASE_URL = "https://api.geoapify.com";
@@ -52,37 +50,27 @@ export const transformAutocompleteResults = (
 
 const buildPlaceDetailsUrl = (
   id: string,
+  language: string,
   geoapifyApiKey: string,
 ): URL => {
   const url = new URL(
     `${GEOAPIFY_BASE_URL}/v2/place-details`,
   );
   url.searchParams.append("id", id);
+  url.searchParams.append("lang", language);
   url.searchParams.append("apiKey", geoapifyApiKey);
 
   return url;
 };
 
-const transformPlaceBoundaries = (
-  geometry: GeoapifyPlaceGeometry,
-): Boundaries => {
-  switch (geometry.type) {
-    case "Polygon":
-      return { coordinates: [geometry.coordinates] };
-    case "MultiPolygon":
-      // falls through
-    default:
-      return { coordinates: geometry.coordinates };
-  }
-};
-
 const transformPlaceDetailsResults = (
-  { features = [] }: GeoapifyPlaceDetailsResult,
+  placeDetails: GeoapifyPlaceDetailsResult,
 ): PlaceDetails => {
-  const feature = features[0];
+  const feature = placeDetails.features[0];
   return {
     id: feature.properties.place_id,
-    boundaries: transformPlaceBoundaries(feature.geometry),
+    name: feature.properties.formatted,
+    geometry: feature,
   };
 };
 
@@ -117,10 +105,12 @@ export const fetchPlaces = (
 
 export const fetchPlaceDetails = (
   { id }: PlacesDetailsParameters,
+  language: string,
   geoapifyApiKey: string,
 ): Promise<PlaceDetails> => {
   const url = buildPlaceDetailsUrl(
     id,
+    language,
     geoapifyApiKey,
   );
   const start = Date.now();
