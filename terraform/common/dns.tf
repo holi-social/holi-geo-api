@@ -9,7 +9,7 @@ locals {
 # geo api environments zone
 resource "google_dns_managed_zone" "geo_api_environments_zone" {
   project  = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-  name     = "geo-api-environments-zone"
+  name     = "geo-api-holi-social-environments-zone"
   dns_name = local.geo_api_environments_zone_dns_name
 }
 

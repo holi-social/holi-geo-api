@@ -104,6 +104,21 @@ resource "google_cloud_run_domain_mapping" "geo_api" {
   project = google_cloud_run_service.geo_api.project
   # location needs to be the same as the service's
   location = google_cloud_run_service.geo_api.location
+  name     = local.project_holi_dns_name
+
+  metadata {
+    namespace = google_cloud_run_service.geo_api.project
+  }
+
+  spec {
+    route_name = google_cloud_run_service.geo_api.name
+  }
+}
+
+resource "google_cloud_run_domain_mapping" "holi_social_geo_api" {
+  project = google_cloud_run_service.geo_api.project
+  # location needs to be the same as the service's
+  location = google_cloud_run_service.geo_api.location
   name     = local.dns_name
 
   metadata {
