@@ -2472,3 +2472,8 @@ export const expectedPlaceDetailsGqlResponseSinglePolygon = {
   ...expectedPlaceDetailsGqlResponse,
   geometry: placeFeatureSinglePolygon,
 };
+
+export const geoapifyPlaceDetailsNotFound = {
+  "type": "FeatureCollection",
+  "features": [],
+};

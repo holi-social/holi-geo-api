@@ -14,7 +14,8 @@ const typeDefs = `
       longitude: Float!
     }
     
-    scalar Geometry
+    "GeoJSON describing the geometry feature of a geolocation"
+    scalar GeoJSON
     
     type Place {
         id: String!
@@ -26,7 +27,7 @@ const typeDefs = `
     type PlaceDetails {
       id: ID!
       name: String!
-      geometry: Geometry!
+      geometry: GeoJSON!
     }
     
     type Query {

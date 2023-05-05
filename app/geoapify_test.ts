@@ -13,6 +13,7 @@ import {
   expectedPlaceDetailsGqlResponseSinglePolygon,
   expectedPlacesAutocompleteGqlResponse,
   geoapifyAutocompleteResponse,
+  geoapifyPlaceDetailsNotFound,
   geoapifyPlaceDetailsResponse,
   geoapifyPlaceDetailsResponseSinglePolygon,
 } from "./geoapify_test_data.ts";
@@ -136,5 +137,18 @@ describe("placeDetails", () => {
       ),
     );
     assertEquals(placeDetails, expectedPlaceDetailsGqlResponseSinglePolygon);
+  });
+
+  it("throws error if no details were found", async () => {
+    fetchStub = stubFetch(geoapifyPlaceDetailsNotFound);
+    const graphQLServer = createGraphQLServer({});
+
+    const response = await queryPlaceDetails(
+      graphQLServer,
+      placeDetailsQuery(
+        "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
+      ),
+    );
+    assertEquals(response, undefined);
   });
 });

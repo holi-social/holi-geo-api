@@ -65,7 +65,10 @@ const buildPlaceDetailsUrl = (
 
 const transformPlaceDetailsResults = (
   placeDetails: GeoapifyPlaceDetailsResult,
-): PlaceDetails => {
+): PlaceDetails | undefined => {
+  if (!placeDetails.features.length) {
+    throw new Error("No details found for place");
+  }
   const feature = placeDetails.features[0];
   return {
     id: feature.properties.place_id,
@@ -107,7 +110,7 @@ export const fetchPlaceDetails = (
   { id }: PlacesDetailsParameters,
   language: string,
   geoapifyApiKey: string,
-): Promise<PlaceDetails> => {
+): Promise<PlaceDetails | undefined> => {
   const url = buildPlaceDetailsUrl(
     id,
     language,
