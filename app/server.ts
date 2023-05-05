@@ -97,7 +97,11 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
   const plugins = config.cacheEnabled || DEFAULT_CACHE_ENABLED
     ? [
       useResponseCache({
-        session: () => null, // global cache, shared by all users
+        // global cache per language, shared by all users
+        session: (request: Request) =>
+          getLanguage(
+            request.headers.get("accept-language") || DEFAULT_LANGUAGE,
+          ),
         ttlPerSchemaCoordinate: {
           "Query.placesAutocomplete":
             DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
