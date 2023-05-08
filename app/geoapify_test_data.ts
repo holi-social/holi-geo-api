@@ -2452,7 +2452,7 @@ export const expectedPlaceDetailsGqlResponse = {
   id:
     "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
   name: "München, Munich, Bavaria, Germany",
-  geometry: placeFeature,
+  geolocation: placeFeature,
 };
 
 const placeFeatureSinglePolygon = {
@@ -2470,7 +2470,7 @@ export const geoapifyPlaceDetailsResponseSinglePolygon = {
 
 export const expectedPlaceDetailsGqlResponseSinglePolygon = {
   ...expectedPlaceDetailsGqlResponse,
-  geometry: placeFeatureSinglePolygon,
+  geolocation: placeFeatureSinglePolygon,
 };
 
 export const geoapifyPlaceDetailsNotFound = {

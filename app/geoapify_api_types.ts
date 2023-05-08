@@ -6,7 +6,10 @@ export type GeoapifyPlace = {
   lat: number;
 };
 
-export type GeoapifyGeometry = Record<string, unknown>;
+export type GeoapifyGeometry = {
+  type: string;
+  coordinates: number[] | number[][] | number[][][] | number[][][][];
+};
 
 export type GeoapifyPlaceDetails = {
   properties: {

@@ -27,7 +27,7 @@ const typeDefs = `
     type PlaceDetails {
       id: ID!
       name: String!
-      geometry: GeoJSON!
+      geolocation: GeoJSON!
     }
     
     type Query {

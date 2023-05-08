@@ -73,7 +73,7 @@ const transformPlaceDetailsResults = (
   return {
     id: feature.properties.place_id,
     name: feature.properties.formatted,
-    geometry: feature,
+    geolocation: feature,
   };
 };
 
@@ -117,7 +117,7 @@ export const fetchPlaceDetails = (
     geoapifyApiKey,
   );
   const start = Date.now();
-  logger.info(`fetching place details for search input ${id}`);
+  logger.info(`fetching place details for place id ${id}`);
   return fetch(url)
     .then((result) => result.json())
     .then(transformPlaceDetailsResults)

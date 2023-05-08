@@ -38,7 +38,7 @@ const placeFragment = `
 const placeDetailsFragment = `
   id
   name
-  geometry
+  geolocation
 `;
 
 const placesAutocompleteQuery = (text: string) => `

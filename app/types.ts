@@ -1,4 +1,4 @@
-import { GeoapifyGeometry } from "./geoapify_api_types.ts";
+import { GeoapifyPlaceDetails } from "./geoapify_api_types.ts";
 
 export type Coordinates = {
   latitude: number;
@@ -15,7 +15,7 @@ export interface Place {
 export interface PlaceDetails {
   id: string;
   name: string;
-  geometry: GeoapifyGeometry;
+  geolocation: GeoapifyPlaceDetails;
 }
 
 export const DEFAULT_LANGUAGE = "en";
