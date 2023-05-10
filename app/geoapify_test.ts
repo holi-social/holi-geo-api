@@ -10,9 +10,12 @@ import { processGqlRequest, stubFetch } from "./common_test.ts";
 import { fetchPlaces } from "./geoapify.ts";
 import {
   expectedPlaceDetailsGqlResponse,
+  expectedPlaceDetailsGqlResponseSinglePolygon,
   expectedPlacesAutocompleteGqlResponse,
   geoapifyAutocompleteResponse,
+  geoapifyPlaceDetailsNotFound,
   geoapifyPlaceDetailsResponse,
+  geoapifyPlaceDetailsResponseSinglePolygon,
 } from "./geoapify_test_data.ts";
 
 import { DEFAULT_LANGUAGE, Place, PlaceDetails } from "./types.ts";
@@ -34,9 +37,8 @@ const placeFragment = `
 
 const placeDetailsFragment = `
   id
-  boundaries {
-    coordinates
-  }
+  name
+  geolocation
 `;
 
 const placesAutocompleteQuery = (text: string) => `
@@ -97,7 +99,6 @@ describe("places", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
-    console.log(fetchStub);
     const graphQLServer = createGraphQLServer({});
     const places = await queryPlaces(
       graphQLServer,
@@ -124,5 +125,30 @@ describe("placeDetails", () => {
       ),
     );
     assertEquals(placeDetails, expectedPlaceDetailsGqlResponse);
+  });
+
+  it("correctly parses result and transforms response for single polygon", async () => {
+    fetchStub = stubFetch(geoapifyPlaceDetailsResponseSinglePolygon);
+    const graphQLServer = createGraphQLServer({});
+    const placeDetails = await queryPlaceDetails(
+      graphQLServer,
+      placeDetailsQuery(
+        "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
+      ),
+    );
+    assertEquals(placeDetails, expectedPlaceDetailsGqlResponseSinglePolygon);
+  });
+
+  it("throws error if no details were found", async () => {
+    fetchStub = stubFetch(geoapifyPlaceDetailsNotFound);
+    const graphQLServer = createGraphQLServer({});
+
+    const response = await queryPlaceDetails(
+      graphQLServer,
+      placeDetailsQuery(
+        "51c69eecf83f18274059dd3ad3f89a134840f00101f901dcf3000000000000c002099203084dc3bc6e6368656e",
+      ),
+    );
+    assertEquals(response, undefined);
   });
 });

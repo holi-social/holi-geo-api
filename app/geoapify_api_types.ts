@@ -6,13 +6,17 @@ export type GeoapifyPlace = {
   lat: number;
 };
 
+export type GeoapifyGeometry = {
+  type: string;
+  coordinates: number[] | number[][] | number[][][] | number[][][][];
+};
+
 export type GeoapifyPlaceDetails = {
   properties: {
     place_id: string;
+    formatted: string;
   };
-  geometry: {
-    coordinates: number[][][][];
-  };
+  geometry: GeoapifyGeometry;
 };
 
 export type GeoapifyAutocompleteResult = {

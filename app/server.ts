@@ -14,9 +14,8 @@ const typeDefs = `
       longitude: Float!
     }
     
-    type Boundaries {
-      coordinates: [[[[Float!]]]]!
-    }
+    "GeoJSON describing the geometry feature of a geolocation"
+    scalar GeoJSON
     
     type Place {
         id: String!
@@ -27,7 +26,8 @@ const typeDefs = `
 
     type PlaceDetails {
       id: ID!
-      boundaries: Boundaries!
+      name: String!
+      geolocation: GeoJSON!
     }
     
     type Query {
@@ -36,6 +36,13 @@ const typeDefs = `
     }
 `;
 
+const getLanguage = (languages = "") =>
+  languages
+    .split(",")
+    .map((language) => language.split("-")[0])
+    .find((language) => SUPPORTED_LANGUAGES.includes(language)) ||
+  DEFAULT_LANGUAGE;
+
 const createResolvers = (config: ServerConfig) => ({
   Query: {
     placesAutocomplete: (
@@ -43,24 +50,23 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesAutocompleteParameters,
       context: GraphQLContext,
-    ) => {
-      const language =
-        context.language && SUPPORTED_LANGUAGES.includes(context.language)
-          ? context.language
-          : DEFAULT_LANGUAGE;
-
-      return fetchPlaces(
+    ) =>
+      fetchPlaces(
         parameters,
-        language,
+        getLanguage(context.language),
         config.geoapifyApiKey || "",
-      );
-    },
+      ),
     placeDetails: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesDetailsParameters,
+      context: GraphQLContext,
     ) => {
-      return fetchPlaceDetails(parameters, config.geoapifyApiKey || "");
+      return fetchPlaceDetails(
+        parameters,
+        getLanguage(context.language),
+        config.geoapifyApiKey || "",
+      );
     },
   },
 });
@@ -91,7 +97,11 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
   const plugins = config.cacheEnabled || DEFAULT_CACHE_ENABLED
     ? [
       useResponseCache({
-        session: () => null, // global cache, shared by all users
+        // global cache per language, shared by all users
+        session: (request: Request) =>
+          getLanguage(
+            request.headers.get("accept-language") || DEFAULT_LANGUAGE,
+          ),
         ttlPerSchemaCoordinate: {
           "Query.placesAutocomplete":
             DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
