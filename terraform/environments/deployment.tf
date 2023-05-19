@@ -39,7 +39,7 @@ resource "google_cloud_run_service" "geo_api" {
     spec {
       service_account_name = data.terraform_remote_state.holi_geo_api_common_state.outputs.cloud_run_service_account_email
       containers {
-        image = "${data.terraform_remote_state.holi_infra_state.outputs.gcr_location}/holi-geo-api:${var.image_tag}"
+        image = "${data.terraform_remote_state.holi_infra_state.outputs.artifact_registry_location}/holi-geo-api:${var.image_tag}"
         ports {
           container_port = 8003
         }
