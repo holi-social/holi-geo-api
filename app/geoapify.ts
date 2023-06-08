@@ -50,24 +50,30 @@ export const transformAutocompleteResults = (
 
 const buildPlaceDetailsUrl = (
   id: string,
+  language: string,
   geoapifyApiKey: string,
 ): URL => {
   const url = new URL(
     `${GEOAPIFY_BASE_URL}/v2/place-details`,
   );
   url.searchParams.append("id", id);
+  url.searchParams.append("lang", language);
   url.searchParams.append("apiKey", geoapifyApiKey);
 
   return url;
 };
 
-export const transformPlaceDetailsResults = (
-  { features = [] }: GeoapifyPlaceDetailsResult,
-): PlaceDetails => {
-  const feature = features[0];
+const transformPlaceDetailsResults = (
+  placeDetails: GeoapifyPlaceDetailsResult,
+): PlaceDetails | undefined => {
+  if (!placeDetails.features.length) {
+    throw new Error("No details found for place");
+  }
+  const feature = placeDetails.features[0];
   return {
     id: feature.properties.place_id,
-    boundaries: feature.geometry,
+    name: feature.properties.formatted,
+    geolocation: feature,
   };
 };
 
@@ -102,14 +108,16 @@ export const fetchPlaces = (
 
 export const fetchPlaceDetails = (
   { id }: PlacesDetailsParameters,
+  language: string,
   geoapifyApiKey: string,
-): Promise<PlaceDetails> => {
+): Promise<PlaceDetails | undefined> => {
   const url = buildPlaceDetailsUrl(
     id,
+    language,
     geoapifyApiKey,
   );
   const start = Date.now();
-  logger.info(`fetching place details for search input ${id}`);
+  logger.info(`fetching place details for place id ${id}`);
   return fetch(url)
     .then((result) => result.json())
     .then(transformPlaceDetailsResults)
