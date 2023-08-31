@@ -17,5 +17,8 @@
         "gitHook": "pre-commit"
       }
     }
+  },
+  "fmt": {
+    "exclude": ["*.md"]
   }
 }
