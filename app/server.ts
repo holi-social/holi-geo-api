@@ -1,5 +1,7 @@
 import {
   DEFAULT_LANGUAGE,
+  Place,
+  PlaceDetails,
   PlacesAutocompleteParameters,
   PlacesDetailsParameters,
   SUPPORTED_LANGUAGES,
@@ -50,18 +52,19 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesAutocompleteParameters,
       context: GraphQLContext,
-    ) =>
+    ): Promise<Place[]> =>
       config.fake ? Promise.resolve([]) : fetchPlaces(
         parameters,
         getLanguage(context.language),
         config.geoapifyApiKey,
       ),
+
     placeDetails: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesDetailsParameters,
       context: GraphQLContext,
-    ) =>
+    ): Promise<PlaceDetails | undefined> =>
       config.fake ? Promise.resolve(undefined) : fetchPlaceDetails(
         parameters,
         getLanguage(context.language),
