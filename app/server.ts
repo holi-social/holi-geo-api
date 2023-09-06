@@ -50,8 +50,8 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesAutocompleteParameters,
       context: GraphQLContext,
-    ) => config.fake ? Promise.resolve([]) : 
-      fetchPlaces(
+    ) =>
+      config.fake ? Promise.resolve([]) : fetchPlaces(
         parameters,
         getLanguage(context.language),
         config.geoapifyApiKey,
@@ -61,8 +61,8 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesDetailsParameters,
       context: GraphQLContext,
-    ) => config.fake ? Promise.resolve(undefined) : 
-      fetchPlaceDetails(
+    ) =>
+      config.fake ? Promise.resolve(undefined) : fetchPlaceDetails(
         parameters,
         getLanguage(context.language),
         config.geoapifyApiKey,
@@ -140,8 +140,10 @@ export const startServer = (config: ServerConfig): Promise<void> => {
           hostname === "0.0.0.0" ? "localhost" : hostname
         }:${port}/graphql`,
       );
-      if(config.fake) {
-        logger.info(`Server is serving fake data due to FAKE env var set to true`)
+      if (config.fake) {
+        logger.info(
+          `Server is serving fake data due to FAKE env var set to true`,
+        );
       }
     },
   });
