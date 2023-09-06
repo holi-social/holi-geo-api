@@ -32,7 +32,7 @@ const typeDefs = `
     
     type Query {
         placesAutocomplete(text: String!, limit: Int, level: String): [Place]!
-        placeDetails(id: String!): PlaceDetails!
+        placeDetails(id: String!): PlaceDetails
     }
 `;
 
@@ -50,24 +50,23 @@ const createResolvers = (config: ServerConfig) => ({
       _parent: any,
       parameters: PlacesAutocompleteParameters,
       context: GraphQLContext,
-    ) =>
+    ) => config.fake ? Promise.resolve([]) : 
       fetchPlaces(
         parameters,
         getLanguage(context.language),
-        config.geoapifyApiKey || "",
+        config.geoapifyApiKey,
       ),
     placeDetails: (
       // deno-lint-ignore no-explicit-any
       _parent: any,
       parameters: PlacesDetailsParameters,
       context: GraphQLContext,
-    ) => {
-      return fetchPlaceDetails(
+    ) => config.fake ? Promise.resolve(undefined) : 
+      fetchPlaceDetails(
         parameters,
         getLanguage(context.language),
-        config.geoapifyApiKey || "",
-      );
-    },
+        config.geoapifyApiKey,
+      ),
   },
 });
 
@@ -76,10 +75,11 @@ export const DEFAULT_CACHE_ENABLED = true;
 export const DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE = 60_000 * 60 * 24;
 
 export interface ServerConfig {
-  port?: number; // default: 8003
-  cacheEnabled?: boolean; // default: true
-  cacheTtlMsPlacesAutocomplete?: number; // default: 24 hours
-  geoapifyApiKey?: string;
+  port: number; // default: 8003
+  cacheEnabled: boolean; // default: true
+  cacheTtlMsPlacesAutocomplete: number; // default: 24 hours
+  geoapifyApiKey: string;
+  fake: boolean;
 }
 
 export type GraphQLContext = {
@@ -94,7 +94,7 @@ export type GraphQLContext = {
 };
 
 export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
-  const plugins = config.cacheEnabled || DEFAULT_CACHE_ENABLED
+  const plugins = config.cacheEnabled
     ? [
       useResponseCache({
         // global cache per language, shared by all users
@@ -133,13 +133,16 @@ export type GraphQLServer = any;
 export const startServer = (config: ServerConfig): Promise<void> => {
   const graphQLServer: GraphQLServer = createGraphQLServer(config);
   return serve(graphQLServer.handleRequest, {
-    port: config.port || DEFAULT_PORT,
+    port: config.port,
     onListen({ port, hostname }) {
       logger.info(
         `Server started at http://${
           hostname === "0.0.0.0" ? "localhost" : hostname
         }:${port}/graphql`,
       );
+      if(config.fake) {
+        logger.info(`Server is serving fake data due to FAKE env var set to true`)
+      }
     },
   });
 };
