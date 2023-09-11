@@ -1,5 +1,4 @@
 import { returnsNext, stub } from "./dev_deps.ts";
-import { logger } from "./logging.ts";
 import { GraphQLServer } from "./server.ts";
 
 export type ResponsePayload = Record<string, unknown> | Error;
