@@ -1,4 +1,5 @@
 import { returnsNext, stub } from "./dev_deps.ts";
+import { logger } from "./logging.ts";
 import { GraphQLServer } from "./server.ts";
 
 export type ResponsePayload = Record<string, unknown> | Error;
@@ -32,5 +33,7 @@ export const processGqlRequest = (
     // deno-lint-ignore no-explicit-any
     .then((response: any) => response.json())
     // deno-lint-ignore no-explicit-any
-    .then((response: any) => response.data);
+    .then((response: any) => {
+      logger.error(JSON.stringify(response.data))
+      return response.data});
 };

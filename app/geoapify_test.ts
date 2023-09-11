@@ -99,7 +99,13 @@ describe("places", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
-    const graphQLServer = createGraphQLServer({});
+    const graphQLServer = createGraphQLServer({
+      port: 0,
+      cacheEnabled: false,
+      cacheTtlMsPlacesAutocomplete: 0,
+      geoapifyApiKey: "",
+      fake: false
+    });
     const places = await queryPlaces(
       graphQLServer,
       placesAutocompleteQuery("Munich"),
@@ -117,7 +123,13 @@ describe("placeDetails", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsResponse);
-    const graphQLServer = createGraphQLServer({});
+    const graphQLServer = createGraphQLServer({
+      port: 0,
+      cacheEnabled: false,
+      cacheTtlMsPlacesAutocomplete: 0,
+      geoapifyApiKey: "",
+      fake: false
+    });
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
       placeDetailsQuery(
@@ -129,7 +141,13 @@ describe("placeDetails", () => {
 
   it("correctly parses result and transforms response for single polygon", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsResponseSinglePolygon);
-    const graphQLServer = createGraphQLServer({});
+    const graphQLServer = createGraphQLServer({
+      port: 0,
+      cacheEnabled: false,
+      cacheTtlMsPlacesAutocomplete: 0,
+      geoapifyApiKey: "",
+      fake: false
+    });
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
       placeDetailsQuery(
@@ -141,7 +159,13 @@ describe("placeDetails", () => {
 
   it("throws error if no details were found", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsNotFound);
-    const graphQLServer = createGraphQLServer({});
+    const graphQLServer = createGraphQLServer({
+      port: 0,
+      cacheEnabled: false,
+      cacheTtlMsPlacesAutocomplete: 0,
+      geoapifyApiKey: "",
+      fake: false
+    });
 
     const response = await queryPlaceDetails(
       graphQLServer,
