@@ -104,7 +104,7 @@ describe("places", () => {
       cacheEnabled: false,
       cacheTtlMsPlacesAutocomplete: 0,
       geoapifyApiKey: "",
-      fake: false
+      fake: false,
     });
     const places = await queryPlaces(
       graphQLServer,
@@ -128,7 +128,7 @@ describe("placeDetails", () => {
       cacheEnabled: false,
       cacheTtlMsPlacesAutocomplete: 0,
       geoapifyApiKey: "",
-      fake: false
+      fake: false,
     });
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
@@ -146,7 +146,7 @@ describe("placeDetails", () => {
       cacheEnabled: false,
       cacheTtlMsPlacesAutocomplete: 0,
       geoapifyApiKey: "",
-      fake: false
+      fake: false,
     });
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
@@ -164,7 +164,7 @@ describe("placeDetails", () => {
       cacheEnabled: false,
       cacheTtlMsPlacesAutocomplete: 0,
       geoapifyApiKey: "",
-      fake: false
+      fake: false,
     });
 
     const response = await queryPlaceDetails(

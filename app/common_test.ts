@@ -33,7 +33,5 @@ export const processGqlRequest = (
     // deno-lint-ignore no-explicit-any
     .then((response: any) => response.json())
     // deno-lint-ignore no-explicit-any
-    .then((response: any) => {
-      logger.error(JSON.stringify(response.data))
-      return response.data});
+    .then((response: any) => response.data);
 };

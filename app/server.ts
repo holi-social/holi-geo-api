@@ -34,7 +34,7 @@ const typeDefs = `
     
     type Query {
         placesAutocomplete(text: String!, limit: Int, level: String): [Place]!
-        placeDetails(id: String!): PlaceDetails
+        placeDetails(id: String!): PlaceDetails!
     }
 `;
 
