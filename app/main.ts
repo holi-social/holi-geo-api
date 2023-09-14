@@ -13,33 +13,38 @@ logger.setUpLogger(
   environment === "development" ? LogSeverity.DEFAULT : LogSeverity.INFO,
 );
 
-const required = <T>(name: string, t?: T, fallback?: T): T => {
-  if (t === undefined && fallback === undefined) {
+const requiredEnv = <T>(
+  name: string,
+  typeFn: (s: string) => T,
+  fallback?: T,
+): T => {
+  const env = Deno.env.get(name);
+  if (env === undefined && fallback === undefined) {
     throw Error(`Environment variable "${name}" is required`);
   } else {
-    return t !== undefined ? t : fallback!;
+    return env !== undefined ? typeFn(env) : fallback!;
   }
 };
 
+const asBoolean = (str: string) => /^true$/i.test(str);
+
 const serverConfigFromEnv = () => {
-  const asNumber = (str?: string) => (str ? Number(str) : undefined);
-  const asBoolean = (str?: string) => (str ? Boolean(str) : undefined);
-  const fake = asBoolean(Deno.env.get("FAKE")) || false; // For local development. If set, the API returns dummy data
+  const fake = requiredEnv("FAKE", asBoolean, false); // For local development. If set, the API returns dummy data
   return {
-    port: required("PORT", asNumber(Deno.env.get("PORT")), DEFAULT_PORT),
-    cacheEnabled: required(
+    port: requiredEnv("PORT", Number, DEFAULT_PORT),
+    cacheEnabled: requiredEnv(
       "CACHE_ENABLED",
-      asBoolean(Deno.env.get("CACHE_ENABLED")),
+      asBoolean,
       DEFAULT_CACHE_ENABLED,
     ),
-    cacheTtlMsPlacesAutocomplete: required(
+    cacheTtlMsPlacesAutocomplete: requiredEnv(
       "DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE",
-      asNumber(Deno.env.get("DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE")),
+      Number,
       DEFAULT_CACHE_TTL_MS_GEOAPIFY_AUTOCOMPLETE,
     ),
-    geoapifyApiKey: required(
+    geoapifyApiKey: requiredEnv(
       "GEOAPIFY_API_KEY",
-      Deno.env.get("GEOAPIFY_API_KEY"),
+      String,
       fake ? "dummy value" : undefined,
     ),
     fake,

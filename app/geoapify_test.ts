@@ -21,6 +21,14 @@ import {
 import { DEFAULT_LANGUAGE, Place, PlaceDetails } from "./types.ts";
 import { createGraphQLServer, GraphQLServer } from "./server.ts";
 
+const noCacheServerConfig = {
+  port: 0,
+  cacheEnabled: false,
+  cacheTtlMsPlacesAutocomplete: 0,
+  geoapifyApiKey: "",
+  fake: false,
+};
+
 const emptyResponse = {
   predictions: [],
 };
@@ -99,13 +107,7 @@ describe("places", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyAutocompleteResponse);
-    const graphQLServer = createGraphQLServer({
-      port: 0,
-      cacheEnabled: false,
-      cacheTtlMsPlacesAutocomplete: 0,
-      geoapifyApiKey: "",
-      fake: false,
-    });
+    const graphQLServer = createGraphQLServer(noCacheServerConfig);
     const places = await queryPlaces(
       graphQLServer,
       placesAutocompleteQuery("Munich"),
@@ -123,13 +125,7 @@ describe("placeDetails", () => {
 
   it("correctly parses result and returns", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsResponse);
-    const graphQLServer = createGraphQLServer({
-      port: 0,
-      cacheEnabled: false,
-      cacheTtlMsPlacesAutocomplete: 0,
-      geoapifyApiKey: "",
-      fake: false,
-    });
+    const graphQLServer = createGraphQLServer(noCacheServerConfig);
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
       placeDetailsQuery(
@@ -141,13 +137,7 @@ describe("placeDetails", () => {
 
   it("correctly parses result and transforms response for single polygon", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsResponseSinglePolygon);
-    const graphQLServer = createGraphQLServer({
-      port: 0,
-      cacheEnabled: false,
-      cacheTtlMsPlacesAutocomplete: 0,
-      geoapifyApiKey: "",
-      fake: false,
-    });
+    const graphQLServer = createGraphQLServer(noCacheServerConfig);
     const placeDetails = await queryPlaceDetails(
       graphQLServer,
       placeDetailsQuery(
@@ -159,13 +149,7 @@ describe("placeDetails", () => {
 
   it("throws error if no details were found", async () => {
     fetchStub = stubFetch(geoapifyPlaceDetailsNotFound);
-    const graphQLServer = createGraphQLServer({
-      port: 0,
-      cacheEnabled: false,
-      cacheTtlMsPlacesAutocomplete: 0,
-      geoapifyApiKey: "",
-      fake: false,
-    });
+    const graphQLServer = createGraphQLServer(noCacheServerConfig);
 
     const response = await queryPlaceDetails(
       graphQLServer,
