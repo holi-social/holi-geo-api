@@ -119,12 +119,11 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
     graphiql: true,
     plugins,
     context: (context: GraphQLContext) => {
-      const language = (context.params?.extensions?.headers || {})[
-        "accept-language"
-      ];
+      const headers = new Headers(context.params?.extensions?.headers);
+      const languages = headers.get("accept-language") || DEFAULT_LANGUAGE;
       return {
         ...context,
-        language,
+        language: getLanguage(languages),
       };
     },
   });
