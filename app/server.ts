@@ -55,7 +55,7 @@ const createResolvers = (config: ServerConfig) => ({
     ): Promise<Place[]> =>
       config.fake ? Promise.resolve([]) : fetchPlaces(
         parameters,
-        getLanguage(context.language),
+        context.language || DEFAULT_LANGUAGE,
         config.geoapifyApiKey,
       ),
 
@@ -67,7 +67,7 @@ const createResolvers = (config: ServerConfig) => ({
     ): Promise<PlaceDetails | undefined> =>
       config.fake ? Promise.resolve(undefined) : fetchPlaceDetails(
         parameters,
-        getLanguage(context.language),
+        context.language || DEFAULT_LANGUAGE,
         config.geoapifyApiKey,
       ),
   },
@@ -119,12 +119,11 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
     graphiql: true,
     plugins,
     context: (context: GraphQLContext) => {
-      const language = (context.params?.extensions?.headers || {})[
-        "accept-language"
-      ];
+      const headers = new Headers(context.params?.extensions?.headers);
+      const languages = headers.get("accept-language") || DEFAULT_LANGUAGE;
       return {
         ...context,
-        language,
+        language: getLanguage(languages),
       };
     },
   });
