@@ -55,7 +55,7 @@ const createResolvers = (config: ServerConfig) => ({
     ): Promise<Place[]> =>
       config.fake ? Promise.resolve([]) : fetchPlaces(
         parameters,
-        getLanguage(context.language),
+        context.language || DEFAULT_LANGUAGE,
         config.geoapifyApiKey,
       ),
 
@@ -67,7 +67,7 @@ const createResolvers = (config: ServerConfig) => ({
     ): Promise<PlaceDetails | undefined> =>
       config.fake ? Promise.resolve(undefined) : fetchPlaceDetails(
         parameters,
-        getLanguage(context.language),
+        context.language || DEFAULT_LANGUAGE,
         config.geoapifyApiKey,
       ),
   },
