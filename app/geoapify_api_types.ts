@@ -30,4 +30,5 @@ export type GeoapifyPlaceDetailsResult = {
 export enum GeoapifyFilters {
   LIMIT = 3,
   FORMAT = "json",
+  BIAS = "countrycode:de",
 }
