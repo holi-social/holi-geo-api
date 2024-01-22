@@ -25,6 +25,7 @@ const buildPlacesAutocompleteUrl = (
   url.searchParams.append("limit", limit.toString());
   url.searchParams.append("format", GeoapifyFilters.FORMAT);
   url.searchParams.append("lang", language);
+  url.searchParams.append("bias", GeoapifyFilters.BIAS);
   url.searchParams.append("apiKey", geoapifyApiKey);
 
   if (level) {
