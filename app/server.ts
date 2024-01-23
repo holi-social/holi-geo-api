@@ -23,6 +23,8 @@ const typeDefs = `
         id: String!
         name: String!
         city: String
+        state: String
+        country: String!
         coordinates: Coordinates!
     }
 

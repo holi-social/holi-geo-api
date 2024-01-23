@@ -2,6 +2,8 @@ export type GeoapifyPlace = {
   place_id: string;
   formatted: string;
   city?: string;
+  state?: string;
+  country: string;
   lon: number;
   lat: number;
 };
