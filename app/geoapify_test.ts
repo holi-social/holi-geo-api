@@ -37,6 +37,8 @@ const placeFragment = `
   id
   name
   city
+  state
+  country
   coordinates {
     latitude
     longitude
