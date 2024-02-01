@@ -37,6 +37,8 @@ const placeFragment = `
   id
   name
   city
+  state
+  country
   coordinates {
     latitude
     longitude
@@ -100,7 +102,7 @@ describe("places", () => {
     );
 
     const expectedUrl = new URL(
-      `https://api.geoapify.com/v1/geocode/autocomplete?text=Munich&limit=3&format=json&lang=en&apiKey=${placesApiKey}`,
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=Munich&limit=3&format=json&lang=en&bias=countrycode%3Ade&apiKey=${placesApiKey}`,
     );
     assertSpyCall(fetchStub, 0, { args: [expectedUrl] });
   });

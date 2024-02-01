@@ -2,6 +2,8 @@ export type GeoapifyPlace = {
   place_id: string;
   formatted: string;
   city?: string;
+  state?: string;
+  country: string;
   lon: number;
   lat: number;
 };
@@ -30,4 +32,5 @@ export type GeoapifyPlaceDetailsResult = {
 export enum GeoapifyFilters {
   LIMIT = 3,
   FORMAT = "json",
+  BIAS = "countrycode:de",
 }

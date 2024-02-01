@@ -25,6 +25,7 @@ const buildPlacesAutocompleteUrl = (
   url.searchParams.append("limit", limit.toString());
   url.searchParams.append("format", GeoapifyFilters.FORMAT);
   url.searchParams.append("lang", language);
+  url.searchParams.append("bias", GeoapifyFilters.BIAS);
   url.searchParams.append("apiKey", geoapifyApiKey);
 
   if (level) {
@@ -41,6 +42,8 @@ export const transformAutocompleteResults = (
     id: place.place_id,
     name: place.formatted,
     city: place.city,
+    state: place.state,
+    country: place.country,
     coordinates: {
       latitude: place.lat,
       longitude: place.lon,
