@@ -66,7 +66,7 @@ resource "google_cloud_run_service" "geo_api" {
             memory = local.environment == "production" ? "512Mi" : "256Mi"
           }
           requests = {
-            cpu    = local.environment == "production" ? "1000m" : "10m"
+            cpu    = local.environment == "production" ? "1000m" : "1000m"
             memory = local.environment == "production" ? "512Mi" : "256Mi"
           }
         }
