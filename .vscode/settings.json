@@ -2,8 +2,5 @@
   "deno.enable": true,
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }
