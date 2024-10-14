@@ -96,6 +96,11 @@ export type GraphQLContext = {
       }
     }
   }
+  request?: {
+    headers?: {
+      [key: string]: string
+    }
+  }
   language?: string
 }
 
@@ -121,7 +126,7 @@ export const createGraphQLServer = (config: ServerConfig): GraphQLServer => {
     graphiql: true,
     plugins,
     context: (context: GraphQLContext) => {
-      const headers = new Headers(context.params?.extensions?.headers)
+      const headers = new Headers(context.params?.extensions?.headers ?? context.request?.headers)
       const languages = headers.get('accept-language') || DEFAULT_LANGUAGE
       return {
         ...context,
