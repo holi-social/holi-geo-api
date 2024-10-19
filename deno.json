@@ -11,7 +11,7 @@
       "dev": "deno run --allow-import --allow-net --allow-env --lock=deno.lock --cached-only --watch app/main.ts",
       "start": "deno run --allow-import --allow-net --allow-env --lock=deno.lock --cached-only app/main.ts",
       "docker": "docker build -t geo-service . && docker run -it --init -p 8003:8003 geo-service",
-      "coverage": "deno test --coverage=coverage && deno coverage coverage",
+      "coverage": "deno test --allow-import --coverage=coverage && deno coverage coverage",
       "pre-commit": {
         "cmd": "vr lint && vr fmt:check",
         "gitHook": "pre-commit"
@@ -22,6 +22,8 @@
     "lineWidth": 120,
     "singleQuote": true,
     "semiColons": false,
-    "exclude": ["*.md"]
+    "exclude": [
+      "*.md"
+    ]
   }
 }
