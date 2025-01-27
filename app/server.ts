@@ -142,7 +142,7 @@ export type GraphQLServer = any
 export const startServer = (config: ServerConfig): Promise<void> => {
   const graphQLServer: GraphQLServer = createGraphQLServer(config)
 
-  const handler = async (request: Request): Promise<Response> => {
+  const handler = (request: Request): Response => {
     const url = new URL(request.url)
 
     if (url.pathname === '/health') {
