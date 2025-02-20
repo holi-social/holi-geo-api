@@ -160,7 +160,7 @@ export const startServer = (config: ServerConfig): Promise<void> => {
       )
       if (config.fake) {
         logger.info(
-          `Server is serving fake data due to FAKE env var set to true`,
+          'Server is serving fake data due to FAKE env var set to true',
         )
       }
     },

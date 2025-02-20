@@ -93,9 +93,8 @@ describe('places', () => {
       DEFAULT_LANGUAGE,
       placesApiKey,
     )
-
     const expectedUrl = new URL(
-      `https://api.geoapify.com/v1/geocode/autocomplete?text=Munich&limit=3&format=json&lang=en&bias=countrycode%3Ade&apiKey=${placesApiKey}`,
+      `https://api.geoapify.com/v1/geocode/autocomplete?text=Munich&limit=3&format=json&lang=en&bias=rect%3A5.9%2C47.3%2C15.1%2C55&apiKey=${placesApiKey}`,
     )
     assertSpyCall(fetchStub, 0, { args: [expectedUrl] })
   })
