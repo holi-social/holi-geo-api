@@ -27,10 +27,8 @@ variables:
     #when: on_failure
     expire_in: 1 week
   script:
-    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID"
-      "$CI_COMMIT_SHA"
-    - echo "$(terraform/environments/scripts/get-output.sh api_domain)" >
-      "$API_DOMAIN_PATH"
+    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
+    - echo "$(terraform/environments/scripts/get-output.sh api_domain)" > "$API_DOMAIN_PATH"
   resource_group: $ENVIRONMENT_ID # never execute terraform in parallel on the same environment
   interruptible: false
 
@@ -81,8 +79,7 @@ build_docker:
     GCR_IMAGE: europe-north1-docker.pkg.dev/holi-shared/docker/holi-geo-api
   script:
     - docker pull "$GCR_IMAGE" || true # Allows us to use --cache-from, we need to tag with latest in the next command for this to work
-    - docker build --cache-from "$GCR_IMAGE" -t "$GCR_IMAGE":latest -t
-      "$GCR_IMAGE":"$CI_COMMIT_SHA" -t "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" .
+    - docker build --cache-from "$GCR_IMAGE" -t "$GCR_IMAGE":latest -t "$GCR_IMAGE":"$CI_COMMIT_SHA" -t "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" .
     - docker push "$GCR_IMAGE":"$CI_COMMIT_SHA" # this is the tag that is used for deployment
     - docker push "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" # just for easyly knowing which is the last image for a branch
     - docker push "$GCR_IMAGE":latest # for caching the build
