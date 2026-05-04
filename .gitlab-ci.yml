@@ -15,7 +15,7 @@ variables:
   image:
     name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.15.1'
     # default entrypoint is terraform command, but we want to run shell scripts
-    entrypoint: ['/bin/sh', '-c']
+    entrypoint: [ '/bin/sh', '-c' ]
   variables:
     ENVIRONMENT_ID: $CI_ENVIRONMENT_SLUG
   artifacts:
@@ -27,8 +27,10 @@ variables:
     #when: on_failure
     expire_in: 1 week
   script:
-    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
-    - echo "$(terraform/environments/scripts/get-output.sh api_domain)" > "$API_DOMAIN_PATH"
+    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID"
+      "$CI_COMMIT_SHA"
+    - echo "$(terraform/environments/scripts/get-output.sh api_domain)" >
+      "$API_DOMAIN_PATH"
   resource_group: $ENVIRONMENT_ID # never execute terraform in parallel on the same environment
   interruptible: false
 
@@ -40,14 +42,14 @@ variables:
     - BASE_URL="https://${API_DOMAIN}/graphql" k6 run smoketest/main.js
     # TODO should/could we roll back the service to the last working revision on test failure?
 
-# end job templates
+    # end job templates
 
-# pipeline in chronological order
+    # pipeline in chronological order
 
-## common steps
+    ## common steps
 
 cache_lint_test:
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/denoland/deno:2.5.6'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/denoland/deno:2.7.14'
   stage: 'test'
   script:
     - deno cache --allow-import --lock=deno.lock app/deps.ts app/dev_deps.ts
@@ -63,13 +65,13 @@ cache_lint_test:
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 sast:
-  needs: ['cache_lint_test']
+  needs: [ 'cache_lint_test' ]
   stage: test
 include:
   - template: Security/SAST.gitlab-ci.yml
 
 build_docker:
-  needs: ['cache_lint_test']
+  needs: [ 'cache_lint_test' ]
   image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/docker:29'
   services:
     - name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/docker:29-dind'
@@ -79,7 +81,8 @@ build_docker:
     GCR_IMAGE: europe-north1-docker.pkg.dev/holi-shared/docker/holi-geo-api
   script:
     - docker pull "$GCR_IMAGE" || true # Allows us to use --cache-from, we need to tag with latest in the next command for this to work
-    - docker build --cache-from "$GCR_IMAGE" -t "$GCR_IMAGE":latest -t "$GCR_IMAGE":"$CI_COMMIT_SHA" -t "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" .
+    - docker build --cache-from "$GCR_IMAGE" -t "$GCR_IMAGE":latest -t
+      "$GCR_IMAGE":"$CI_COMMIT_SHA" -t "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" .
     - docker push "$GCR_IMAGE":"$CI_COMMIT_SHA" # this is the tag that is used for deployment
     - docker push "$GCR_IMAGE":"$CI_COMMIT_REF_SLUG" # just for easyly knowing which is the last image for a branch
     - docker push "$GCR_IMAGE":latest # for caching the build
@@ -88,7 +91,7 @@ build_docker:
 
 review_deploy:
   extends: .deploy
-  needs: ['build_docker']
+  needs: [ 'build_docker' ]
   environment:
     name: review/$CI_COMMIT_REF_SLUG
     url: https://$CI_ENVIRONMENT_SLUG.geo.apis.holi.social
@@ -101,18 +104,18 @@ review_deploy:
 
 review_smoketest:
   extends: .smoketest
-  needs: ['review_deploy']
+  needs: [ 'review_deploy' ]
   except:
     - main
     - production
     - /^noenv\/.*/
 
 review_destroy:
-  needs: ['review_deploy']
+  needs: [ 'review_deploy' ]
   image:
     name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.15.1'
     # default entrypoint is terraform command, but we want to run shell scripts
-    entrypoint: ['/bin/sh', '-c']
+    entrypoint: [ '/bin/sh', '-c' ]
   variables:
     # has to be set to none for auto stop
     GIT_STRATEGY: none
@@ -147,7 +150,7 @@ review_destroy:
 
 staging_deploy:
   extends: .deploy
-  needs: ['build_docker']
+  needs: [ 'build_docker' ]
   environment:
     name: staging
     deployment_tier: staging
@@ -160,14 +163,14 @@ staging_deploy:
 
 staging_smoketest:
   extends: .smoketest
-  needs: ['staging_deploy']
+  needs: [ 'staging_deploy' ]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: on_success
   resource_group: unified-api-staging
 
 staging_trigger_unified-api_redeployment:
-  needs: ['staging_smoketest']
+  needs: [ 'staging_smoketest' ]
   trigger:
     project: 'app/holi-unified-api'
     branch: 'main'
@@ -182,7 +185,7 @@ staging_trigger_unified-api_redeployment:
 
 production_deploy:
   extends: .deploy
-  needs: ['build_docker']
+  needs: [ 'build_docker' ]
   allow_failure: false
   environment:
     name: production
@@ -196,13 +199,13 @@ production_deploy:
 
 production_smoketest:
   extends: .smoketest
-  needs: ['production_deploy']
+  needs: [ 'production_deploy' ]
   rules:
     - if: $CI_COMMIT_BRANCH == "production"
       when: on_success
 
 production_trigger_unified-api_redeployment:
-  needs: ['production_smoketest']
+  needs: [ 'production_smoketest' ]
   trigger:
     project: 'app/holi-unified-api'
     branch: 'production'
